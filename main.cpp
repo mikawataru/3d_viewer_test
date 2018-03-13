@@ -5,7 +5,7 @@
 
 #include    <windows.h>
 #include	<cmath>
-#include	"game_engine.h"
+#include	"view_engine.h"
 
 RECT recDisplay;
 
@@ -13,13 +13,20 @@ LRESULT  CALLBACK   WndProc(HWND, UINT, WPARAM, LPARAM);
 int      WINAPI     WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 void				drawWindow(HWND,HDC);
 
+//std::vector<vector3D> panel = Model3D(CUBE).getpixels();
+Object3D obj;
+
 LRESULT  CALLBACK  WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static int frame = 0;
 	HDC hdc;
 	PAINTSTRUCT ps;
 
 	switch (msg) {
-		case WM_CREATE	:	SetTimer(hWnd, ID_TIMER, 1, NULL);	break;			//ãNìÆéûèàóù
+		case WM_CREATE	:	
+							SetTimer(hWnd, ID_TIMER, 1, NULL);					//ãNìÆéûèàóù
+							obj.models.push_back(Model3D(PANEL));
+							break;
+
 		case WM_DESTROY	:	PostQuitMessage(0);					break;			//èIóπèàóù
 		case WM_PAINT	:														//ï`âÊèàóù
 							hdc = BeginPaint(hWnd, &ps);
@@ -45,6 +52,7 @@ LRESULT  CALLBACK  WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 int  WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
 	HWND hWnd;
 	MSG  msg;
 
@@ -87,24 +95,19 @@ int  WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 }
 
 void drawWindow(HWND hWnd, HDC hdc) {
-
 	static int angle = 0;
-	int R = 150;
-	int r = 100;
+	obj.rotation.z = angle;
 
 	int center_x = (recDisplay.right - recDisplay.left) / 2;
 	int center_y = (recDisplay.bottom - recDisplay.top) / 2;
 
-	int point_x = center_x + cos(angle * 3.14 / 180.0)*R;
-	int point_y = center_y + +sin(angle * 3.14 / 180.0)*R;
+	std::vector<vector2D> dot;
 
-	for (int i = 0; i < 720; i++) {
-		SetPixel(hdc, point_x+ cos(i * 3.14 / 360.0)*r, point_y+sin(i * 3.14 / 360.0)*r, 0xFF);
-	}
+	std::vector<vector2D> buff = obj.display();
+	dot.insert(dot.end(), buff.begin(), buff.end());
 
-	for (int i = -50; i < 50; i++){
-		SetPixel(hdc, center_x+i, center_y	, 0xFF);
-		SetPixel(hdc, center_x	, center_y+i, 0xFF);
+	for (int i = 0; i < dot.size(); i++){
+		SetPixel(hdc,center_x + (int)dot[i].x, center_y+(int)dot[i].y,0xFF);
 	}
 
 	angle += 2;
