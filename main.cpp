@@ -24,7 +24,7 @@ LRESULT  CALLBACK  WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg) {
 		case WM_CREATE	:	
 							SetTimer(hWnd, ID_TIMER, 1, NULL);					//ãNìÆéûèàóù
-							obj.models.push_back(Model3D(PANEL));
+							obj.models = Model3D(PANEL);
 							break;
 
 		case WM_DESTROY	:	PostQuitMessage(0);					break;			//èIóπèàóù
@@ -96,14 +96,13 @@ int  WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 void drawWindow(HWND hWnd, HDC hdc) {
 	static int angle = 0;
-	obj.rotation.z = angle;
+	obj.Rotate(0,1,0,2);
 
 	int center_x = (recDisplay.right - recDisplay.left) / 2;
 	int center_y = (recDisplay.bottom - recDisplay.top) / 2;
 
-	std::vector<vector2D> dot;
-
-	std::vector<vector2D> buff = obj.display();
+	std::vector<POINT> dot;
+	std::vector<POINT> buff = obj.display();
 	dot.insert(dot.end(), buff.begin(), buff.end());
 
 	for (int i = 0; i < dot.size(); i++){

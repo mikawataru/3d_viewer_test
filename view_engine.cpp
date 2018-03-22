@@ -36,10 +36,6 @@ void vector3D::Rotate(double axisX, double axisY, double axisZ, double angle) {
 		+	(cos(angle) + pow(axisZ, 2)*(1.0 - cos(angle)))*buff.z;
 }
 
-void vector3D::Rotate(double angleX, double angleY, double angleZ) {
-
-}
-
 /******************************* Model3Dクラス *************************************/
 
 Model3D::Model3D(MODEL3D m){
@@ -81,18 +77,27 @@ Model3D::~Model3D(){}
 std::vector<vector3D> Model3D::getpixels(){return pixels;}
 
 /******************************* Object3Dクラス *************************************/
-Object3D::Object3D(){}
+Object3D::Object3D():axisX(vector3D(1,0,0)),axisY(vector3D(0,1,0)),axisZ(vector3D(0,0,1)){}
 Object3D::~Object3D(){}
-std::vector<vector2D> Object3D::display() {
 
-	std::vector<vector3D> pixels;
-	std::vector<vector2D> screen;
+void Object3D::Rotate(double X, double Y, double Z, double deg) {
+	axisX.Rotate(X,Y,Z, deg*DEG2RAD);
+	axisY.Rotate(X,Y,Z, deg*DEG2RAD);
+	axisZ.Rotate(X,Y,Z, deg*DEG2RAD);
+}
 
-	for (int i = 0; i < models.size(); i++){
-		pixels = models[i].getpixels();
-		for (int j = 0; j < pixels.size(); j++){
-			screen.push_back(vector2D(100 * pixels[j].x / (150 + pixels[j].z), 100 * pixels[j].y / (150 + pixels[j].z)));
-		}
+std::vector<POINT> Object3D::display() {
+
+	std::vector<vector3D> law_pixel;
+	std::vector<POINT> screen;
+	law_pixel = models.getpixels();
+
+	for (int j = 0; j < law_pixel.size(); j++){
+		vector3D pixel_1 = axisX * law_pixel[j].x;
+		vector3D pixel_2 = axisY * law_pixel[j].y;
+		vector3D pixel_3 = axisZ * law_pixel[j].z;
+		vector3D pixel = pixel_1 + pixel_2 + pixel_3;
+		screen.push_back(POINT{(100 * pixel.x / (150 + pixel.z)), 100 * pixel.y / (150 + pixel.z) });
 	}
 	return screen;
 }

@@ -1,6 +1,9 @@
 #pragma once
 #include <cmath>
 #include <vector>
+#include <windows.h>
+
+#define DEG2RAD 0.017453292
 
 enum MODEL3D {
 	CUBE = 0, PANEL = 1
@@ -24,7 +27,7 @@ public:
 	vector3D operator-(vector3D &other);
 	vector3D operator*(double &other);
 	void Rotate(double, double, double, double);
-	void Rotate(double, double, double);
+//	void Rotate(double, double, double);
 private:
 
 };
@@ -42,12 +45,12 @@ private:
 
 class Object3D{
 public:
-	std::vector<Model3D> models;
+	Model3D models;
 	vector3D position;
-	vector3D rotation;
-	vector3D axisX,axisY,axisZ;
-	std::vector<vector2D> display();
 	Object3D();
 	~Object3D();
+	void Rotate(double, double, double, double);
+	std::vector<POINT> display();
 private:
+	vector3D axisX,axisY,axisZ;
 };
